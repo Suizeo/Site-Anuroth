@@ -1,1 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anuroth - Minecraft Server</title>
+    <!-- Importando a fonte gótica para o título -->
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+    <!-- Utilizando Tailwind CSS para facilitar o layout responsivo e as cores -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        .logo-text {
+            font-family: 'UnifrakturMaguntia', cursive;
+            /* Efeito de degradê nas letras (Amarelo para Laranja escuro) */
+            background: linear-gradient(to bottom, #ffd54f 10%, #ff5722 50%, #d84315 90%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            /* Sombra projetada escura e marcante */
+            text-shadow: 2px 5px 15px rgba(0, 0, 0, 0.8);
+            letter-spacing: 2px;
+            line-height: 1.2;
+        }
 
+        .credit-text {
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        /* Animação para mover a grade em diagonal (para cima e para a direita) */
+        @keyframes moveGrid {
+            0% {
+                background-position: 0 0;
+            }
+            100% {
+                background-position: 60px -60px;
+            }
+        }
+
+        .warm-grid-bg {
+            background-color: #0d0301;
+            background-image: 
+                radial-gradient(circle at 50% 30%, rgba(220, 80, 20, 0.4) 0%, rgba(20, 5, 0, 0.9) 80%);
+            position: relative;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        .warm-grid-bg::before {
+            content: '';
+            position: fixed;
+            top: -60px;
+            left: -60px;
+            right: -60px;
+            bottom: -60px;
+            /* Linhas com cor laranja/amarelada suave formando a grade */
+            background-image: 
+                linear-gradient(rgba(255, 140, 0, 0.2) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 140, 0, 0.2) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: 0;
+            pointer-events: none;
+            /* Aplicando animação contínua para cima e para a direita */
+            animation: moveGrid 4s linear infinite;
+        }
+
+        /* Animação para as partículas de bolinhas laranjas */
+        @keyframes floatUp {
+            0% {
+                transform: translateY(105vh) scale(0.6);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.8;
+            }
+            80% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-10vh) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        .particle {
+            position: absolute;
+            background: radial-gradient(circle, #ffcc80 0%, #ff6d00 70%, transparent 100%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+            box-shadow: 0 0 8px rgba(255, 109, 0, 0.8);
+            animation: floatUp linear infinite;
+        }
+    </style>
+</head>
+<body class="warm-grid-bg flex justify-center items-center min-h-screen font-sans m-0 p-4 sm:p-8">
+
+    <div id="particles-container" class="absolute inset-0 overflow-hidden pointer-events-none"></div>
+
+    <!-- Container principal com fundo semi-transparente e sombra quente -->
+    <div class="bg-[rgba(15,4,2,0.85)] w-full max-w-[900px] relative pb-16 sm:pb-20 shadow-[0_10px_40px_rgba(150,40,10,0.4)] flex flex-col items-center border border-[#521c0b] z-10 rounded-sm">
+        
+        <header class="text-center pt-8 pb-6 px-4">
+            <h1 class="logo-text text-6xl sm:text-8xl md:text-9xl m-0">Anuroth</h1>
+        </header>
+        
+        <main class="relative w-[90%] sm:w-[80%] mx-auto flex flex-col items-center">
+            <img 
+                src="2026-06-29_23.13.30.jpg" 
+                alt="Paisagem do Servidor Minecraft" 
+                class="w-full h-auto block border border-black shadow-2xl"
+                onerror="this.src='https://placehold.co/800x450/222/555?text=Imagem+Indisponível'"
+            >
+            
+            <!-- Botão de IP flutuante e clicável -->
+            <button 
+                id="copyBtn" 
+                onclick="copyIP()"
+                class="absolute bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 bg-white/75 hover:bg-white/95 transition-all duration-300 px-4 py-2 sm:px-6 sm:py-3 rounded-lg text-gray-900 font-mono text-sm sm:text-xl font-bold tracking-widest shadow-lg cursor-pointer border-2 border-transparent hover:border-orange-500 focus:outline-none"
+                aria-label="Copiar IP do servidor"
+            >
+                Play.anuroth.com
+            </button>
+        </main>
+
+        <footer class="absolute bottom-0 left-0 bg-[rgba(10,2,0,0.95)] py-2 px-4 flex items-center gap-2 border-t border-r border-[#521c0b] rounded-tr-md z-20">
+            <span class="text-[#ff5722] text-lg">⨂</span>
+            <span class="credit-text text-[#ffccbc] text-sm tracking-wide">By Lincoln</span>
+        </footer>
+    </div>
+
+    <script>
+        function createParticles() {
+            const container = document.getElementById('particles-container');
+            const particleCount = 22;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Tamanhos variados para as bolinhas laranjas
+                const size = Math.random() * 8 + 4;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                
+                // Posições horizontais distribuídas pela tela
+                particle.style.left = `${Math.random() * 100}%`;
+                
+                // Duração e atraso aleatórios para fluidez natural
+                const duration = Math.random() * 6 + 4; // Entre 4s e 10s
+                const delay = Math.random() * 5;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+
+                container.appendChild(particle);
+            }
+        }
+
+        function copyIP() {
+            const ipAddress = "Play.anuroth.com";
+            
+            const textArea = document.createElement("textarea");
+            textArea.value = ipAddress;
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+            textArea.style.opacity = "0";
+            
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    const btn = document.getElementById('copyBtn');
+                    const originalText = "Play.anuroth.com";
+                    
+                    btn.innerText = 'IP Copiado!';
+                    btn.classList.add('bg-green-200/95', 'text-green-900');
+                    btn.classList.remove('bg-white/75', 'text-gray-900');
+                    
+                    setTimeout(() => {
+                        btn.innerText = originalText;
+                        btn.classList.remove('bg-green-200/95', 'text-green-900');
+                        btn.classList.add('bg-white/75', 'text-gray-900');
+                    }, 2500);
+                }
+            } catch (err) {
+                console.error('Erro ao tentar copiar o texto: ', err);
+            }
+
+            document.body.removeChild(textArea);
+        }
+
+        // Executa a criação das partículas quando a página carregar
+        window.onload = function() {
+            createParticles();
+        };
+    </script>
+</body>
+</html>
